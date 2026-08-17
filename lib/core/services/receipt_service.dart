@@ -7,10 +7,9 @@ class ReceiptService {
   final ImagePicker _picker;
 
   ReceiptService({
-    required StorageService storageService,
+    required this._storageService,
     ImagePicker? picker,
-  })  : _storageService = storageService,
-        _picker = picker ?? ImagePicker();
+  })  : _picker = picker ?? ImagePicker();
 
   Future<XFile?> pickFromCamera() async {
     return _picker.pickImage(

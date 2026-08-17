@@ -1,10 +1,8 @@
-import 'dart:io';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -14,6 +12,7 @@ import '../../../../core/utils/currency_formatter.dart';
 import '../../../../core/utils/date_formatter.dart';
 import '../../../../presentation/providers/insights_provider.dart';
 import '../../../../presentation/providers/category_provider.dart';
+import '../../../../core/utils/file_helper.dart';
 
 class InsightsScreen extends ConsumerStatefulWidget {
   const InsightsScreen({super.key});
@@ -698,13 +697,16 @@ class _InsightsScreenState extends ConsumerState<InsightsScreen> {
     final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
     if (byteData == null) return;
 
-    final dir = await getTemporaryDirectory();
     final timestamp = DateTime.now().millisecondsSinceEpoch;
-    final file = File('${dir.path}/insights_$timestamp.png');
-    await file.writeAsBytes(byteData.buffer.asUint8List());
+    final fileName = 'insights_$timestamp.png';
+    final filePath = await FileHelper.saveFile(
+      fileName,
+      byteData.buffer.asUint8List(),
+      mimeType: 'image/png',
+    );
 
-    if (mounted) {
-      await Share.shareXFiles([XFile(file.path)], text: 'Trip Insights');
+    if (mounted && filePath != 'web-downloaded') {
+      await Share.shareXFiles([XFile(filePath)], text: 'Trip Insights');
     }
   }
 
@@ -770,13 +772,17 @@ class _InsightsScreenState extends ConsumerState<InsightsScreen> {
       ),
     );
 
-    final dir = await getTemporaryDirectory();
     final timestamp = DateTime.now().millisecondsSinceEpoch;
-    final file = File('${dir.path}/insights_$timestamp.pdf');
-    await file.writeAsBytes(await pdf.save());
+    final fileName = 'insights_$timestamp.pdf';
+    final bytes = await pdf.save();
+    final filePath = await FileHelper.saveFile(
+      fileName,
+      bytes,
+      mimeType: 'application/pdf',
+    );
 
-    if (mounted) {
-      await Share.shareXFiles([XFile(file.path)], text: 'Trip Insights');
+    if (mounted && filePath != 'web-downloaded') {
+      await Share.shareXFiles([XFile(filePath)], text: 'Trip Insights');
     }
   }
 

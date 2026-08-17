@@ -27,8 +27,7 @@ class DailySpending {
 class AnalyticsService {
   final ExpenseFilterService _filterService;
 
-  AnalyticsService({required ExpenseFilterService filterService})
-      : _filterService = filterService;
+  AnalyticsService({required this._filterService});
 
   double lowestExpense(List<ExpenseModel> expenses) {
     if (expenses.isEmpty) return 0;

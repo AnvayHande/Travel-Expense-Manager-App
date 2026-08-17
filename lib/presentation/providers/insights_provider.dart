@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../core/models/expense_model.dart';
 import '../../core/services/insights_service.dart';
 import '../../core/services/analytics_service.dart';
 import '../../core/services/expense_filter_service.dart';

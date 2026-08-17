@@ -17,8 +17,7 @@ abstract class SettlementRepository {
 class FirebaseSettlementRepository implements SettlementRepository {
   final FirestoreService _firestoreService;
 
-  FirebaseSettlementRepository({required FirestoreService firestoreService})
-      : _firestoreService = firestoreService;
+  FirebaseSettlementRepository({required this._firestoreService});
 
   @override
   Stream<List<SettlementModel>> getTripSettlements(String tripId) {

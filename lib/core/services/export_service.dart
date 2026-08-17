@@ -1,7 +1,7 @@
-import 'dart:io';
+import 'dart:typed_data';
 import 'package:excel/excel.dart';
-import 'package:path_provider/path_provider.dart';
 import '../models/expense_model.dart';
+import '../utils/file_helper.dart';
 
 class ExportService {
   Future<String> exportTripExpenses({
@@ -97,12 +97,14 @@ class ExportService {
         '${tripName.replaceAll(RegExp(r'[^\w\s-]'), '').replaceAll(' ', '_')}_'
         '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}.xlsx';
 
-    final dir = await getTemporaryDirectory();
-    final file = File('${dir.path}/$fileName');
     final bytes = excel.encode();
     if (bytes == null) throw Exception('Failed to encode Excel file');
-    await file.writeAsBytes(bytes);
-    return file.path;
+    
+    return FileHelper.saveFile(
+      fileName, 
+      Uint8List.fromList(bytes),
+      mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    );
   }
 
   void _setCell(Sheet sheet, int col, int row, dynamic value) {

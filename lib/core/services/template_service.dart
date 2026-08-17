@@ -5,8 +5,7 @@ import '../repositories/template_repository.dart';
 class TemplateService {
   final TemplateRepository _templateRepository;
 
-  TemplateService({required TemplateRepository templateRepository})
-      : _templateRepository = templateRepository;
+  TemplateService({required this._templateRepository});
 
   Future<void> createTemplate({
     required String userId,

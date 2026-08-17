@@ -1,9 +1,8 @@
-import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:excel/excel.dart';
 import '../../../../core/models/expense_model.dart';
 import '../../../../core/models/trip_model.dart';
@@ -13,6 +12,7 @@ import '../../../../core/services/analytics_service.dart';
 import '../../../../core/services/budget_service.dart';
 import '../../../../core/services/report_service.dart';
 import '../../../../core/services/settlement_service.dart';
+import '../../../../core/utils/file_helper.dart';
 import '../../../../core/repositories/expense_repository.dart';
 import '../../../../core/repositories/settlement_repository.dart';
 import '../../../../presentation/providers/closing_wizard_provider.dart';
@@ -572,19 +572,17 @@ class _GenerateReportsStepState extends ConsumerState<_GenerateReportsStep> {
         catInfo: catInfo,
       );
 
-      final dir = await getTemporaryDirectory();
       final dateStr = '${DateTime.now().year}-'
           '${DateTime.now().month.toString().padLeft(2, '0')}-'
           '${DateTime.now().day.toString().padLeft(2, '0')}';
       final safeName = widget.trip.tripName.replaceAll(RegExp(r'[^\w\s-]'), '').replaceAll(' ', '_');
 
-      final pdfFile = File('${dir.path}/${safeName}_Report_$dateStr.pdf');
-      await pdfFile.writeAsBytes(bytes);
+      final pdfPath = await FileHelper.saveFile('${safeName}_Report_$dateStr.pdf', bytes, mimeType: 'application/pdf');
 
-      final excelPath = await _generateExcel(expenses, dir, safeName, dateStr);
+      final excelPath = await _generateExcel(expenses, safeName, dateStr);
 
       setState(() {
-        _pdfPath = pdfFile.path;
+        _pdfPath = pdfPath;
         _excelPath = excelPath;
         _generating = false;
       });
@@ -598,7 +596,6 @@ class _GenerateReportsStepState extends ConsumerState<_GenerateReportsStep> {
 
   Future<String?> _generateExcel(
     List<ExpenseModel> expenses,
-    Directory dir,
     String safeName,
     String dateStr,
   ) async {
@@ -627,11 +624,14 @@ class _GenerateReportsStepState extends ConsumerState<_GenerateReportsStep> {
       }
 
       final fileName = '${safeName}_Export_$dateStr.xlsx';
-      final file = File('${dir.path}/$fileName');
       final bytes = excel.encode();
       if (bytes == null) throw Exception('Failed to encode Excel');
-      await file.writeAsBytes(bytes);
-      return file.path;
+      
+      return await FileHelper.saveFile(
+        fileName, 
+        Uint8List.fromList(bytes),
+        mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      );
     } catch (_) {
       return null;
     }
@@ -648,12 +648,20 @@ class _GenerateReportsStepState extends ConsumerState<_GenerateReportsStep> {
 
   void _sharePdf() {
     if (_pdfPath != null) {
+      if (kIsWeb || _pdfPath == 'web-downloaded') {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Report has been downloaded.')));
+        return;
+      }
       Share.shareXFiles([XFile(_pdfPath!)], text: '${widget.trip.tripName} - Report');
     }
   }
 
   void _shareExcel() {
     if (_excelPath != null) {
+      if (kIsWeb || _excelPath == 'web-downloaded') {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Excel file has been downloaded.')));
+        return;
+      }
       Share.shareXFiles([XFile(_excelPath!)], text: '${widget.trip.tripName} - Export');
     }
   }

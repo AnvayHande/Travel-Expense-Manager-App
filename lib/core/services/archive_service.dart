@@ -6,10 +6,9 @@ class ArchiveService {
   final ActivityService _activityService;
 
   ArchiveService({
-    required TripRepository tripRepository,
-    required ActivityService activityService,
-  })  : _tripRepository = tripRepository,
-        _activityService = activityService;
+    required this._tripRepository,
+    required this._activityService,
+  });
 
   Future<void> closeTrip({
     required String tripId,

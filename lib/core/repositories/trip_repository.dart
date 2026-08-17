@@ -43,8 +43,7 @@ abstract class TripRepository {
 class FirebaseTripRepository implements TripRepository {
   final FirestoreService _firestoreService;
 
-  FirebaseTripRepository({required FirestoreService firestoreService})
-      : _firestoreService = firestoreService;
+  FirebaseTripRepository({required this._firestoreService});
 
   static const String _chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   static const int _codeLength = 6;

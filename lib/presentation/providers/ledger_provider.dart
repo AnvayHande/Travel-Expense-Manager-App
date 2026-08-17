@@ -1,10 +1,9 @@
-import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:path_provider/path_provider.dart';
+import '../../core/models/expense_model.dart';
 import '../../core/models/category_model.dart';
 import '../../core/services/ledger_service.dart';
+import '../../core/utils/file_helper.dart';
 import 'expense_provider.dart';
-import 'trip_provider.dart';
 import 'firebase_providers.dart';
 import 'settlement_provider.dart';
 final ledgerServiceProvider = Provider<LedgerService>((ref) {
@@ -22,8 +21,6 @@ final participantLedgerProvider2 = Provider.family<ParticipantLedger?, Map<Strin
 
   final expensesAsync = ref.watch(tripExpensesProvider(tripId));
   final expenses = expensesAsync.valueOrNull ?? [];
-  final tripAsync = ref.watch(tripByIdProvider(tripId));
-  final trip = tripAsync.valueOrNull;
   final balances = ref.watch(tripBalanceProvider(tripId));
   final nameAsync = ref.watch(userNameProvider(userId));
 
@@ -92,17 +89,15 @@ class LedgerExportNotifier extends StateNotifier<LedgerExportState> {
         categoryFilter: categoryFilter,
       );
 
-      final dir = await getTemporaryDirectory();
       final safeName = ledger.userName.replaceAll(RegExp(r'[^\w\s-]'), '').replaceAll(' ', '_');
       final dateStr = '${DateTime.now().year}-'
           '${DateTime.now().month.toString().padLeft(2, '0')}-'
           '${DateTime.now().day.toString().padLeft(2, '0')}';
       final fileName = '${safeName}_Ledger_$dateStr.pdf';
-      final file = File('${dir.path}/$fileName');
-      await file.writeAsBytes(bytes);
+      final filePath = await FileHelper.saveFile(fileName, bytes, mimeType: 'application/pdf');
 
-      state = state.copyWith(isLoading: false, filePath: file.path);
-      return file.path;
+      state = state.copyWith(isLoading: false, filePath: filePath);
+      return filePath;
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
       return null;

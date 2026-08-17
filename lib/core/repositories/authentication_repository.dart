@@ -32,10 +32,9 @@ class FirebaseAuthenticationRepository implements AuthenticationRepository {
   final FirestoreService _firestoreService;
 
   FirebaseAuthenticationRepository({
-    required AuthenticationService authService,
-    required FirestoreService firestoreService,
-  })  : _authService = authService,
-        _firestoreService = firestoreService;
+    required this._authService,
+    required this._firestoreService,
+  });
 
   @override
   Stream<UserModel?> get authStateChanges {

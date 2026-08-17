@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -390,11 +391,19 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
   }
 
   Future<void> _shareReport(String filePath) async {
+    if (kIsWeb || filePath == 'web-downloaded') {
+      SnackbarHelper.showInfo(context, 'Report has been downloaded.');
+      return;
+    }
     final file = XFile(filePath);
     await Share.shareXFiles([file], text: 'Trip Report');
   }
 
   Future<void> _saveLocally(String filePath) async {
+    if (kIsWeb || filePath == 'web-downloaded') {
+      SnackbarHelper.showSuccess(context, 'Report has been downloaded to your device.');
+      return;
+    }
     SnackbarHelper.showSuccess(context, 'Report saved to: $filePath');
   }
 }

@@ -5,8 +5,7 @@ import '../repositories/activity_repository.dart';
 class ActivityService {
   final ActivityRepository _activityRepository;
 
-  ActivityService({required ActivityRepository activityRepository})
-      : _activityRepository = activityRepository;
+  ActivityService({required this._activityRepository});
 
   Future<void> logActivity({
     required String tripId,

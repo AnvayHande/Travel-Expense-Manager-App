@@ -3,11 +3,8 @@ import '../../core/models/expense_model.dart';
 import '../../core/models/trip_model.dart';
 import '../../core/services/trip_closing_service.dart';
 import '../../core/repositories/trip_repository.dart';
-import '../../core/repositories/expense_repository.dart';
 import '../../core/repositories/settlement_repository.dart';
-import 'trip_provider.dart';
 import 'activity_provider.dart';
-import 'category_provider.dart';
 
 enum WizardStep { expenseCheck, settlementCheck, generateReports, archive }
 

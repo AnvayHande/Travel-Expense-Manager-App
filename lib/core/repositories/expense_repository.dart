@@ -18,8 +18,7 @@ abstract class ExpenseRepository {
 class FirebaseExpenseRepository implements ExpenseRepository {
   final FirestoreService _firestoreService;
 
-  FirebaseExpenseRepository({required FirestoreService firestoreService})
-      : _firestoreService = firestoreService;
+  FirebaseExpenseRepository({required this._firestoreService});
 
   @override
   Stream<List<ExpenseModel>> getTripExpenses(String tripId) {

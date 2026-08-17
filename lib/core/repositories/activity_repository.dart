@@ -12,8 +12,7 @@ abstract class ActivityRepository {
 class FirebaseActivityRepository implements ActivityRepository {
   final FirestoreService _firestoreService;
 
-  FirebaseActivityRepository({required FirestoreService firestoreService})
-      : _firestoreService = firestoreService;
+  FirebaseActivityRepository({required this._firestoreService});
 
   @override
   Stream<List<ActivityModel>> getTripActivities(String tripId) {

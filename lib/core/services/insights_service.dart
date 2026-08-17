@@ -93,10 +93,9 @@ class InsightsService {
   final AnalyticsService _analyticsService;
 
   InsightsService({
-    required ExpenseFilterService filterService,
-    required AnalyticsService analyticsService,
-  })  : _filterService = filterService,
-        _analyticsService = analyticsService;
+    required this._filterService,
+    required this._analyticsService,
+  });
 
   TripInsights generate({
     required List<ExpenseModel> expenses,
@@ -387,7 +386,7 @@ class InsightsService {
       final span = dates.last.difference(dates.first).inDays + 1;
       final perDay = span > 0 ? (expenses.length / span) : expenses.length.toDouble();
       insights.add(
-        '${expenses.length} expenses across ${span} day${span == 1 ? '' : 's'} '
+        '${expenses.length} expenses across $span day${span == 1 ? '' : 's'} '
         '(${perDay.toStringAsFixed(1)} per day).',
       );
     }

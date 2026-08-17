@@ -131,7 +131,7 @@ class ExpenseModel extends Equatable {
         return amount * ((detail.percentage ?? 0) / 100);
       case 'shares':
         final totalShares =
-            splitDetails.fold<int>(0, (sum, d) => sum + (d.shares ?? 0));
+            splitDetails.fold<int>(0, (acc, d) => acc + (d.shares ?? 0));
         if (totalShares == 0) return 0;
         return amount * ((detail.shares ?? 0) / totalShares);
       case 'paidOnly':

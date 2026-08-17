@@ -1,7 +1,6 @@
 import '../models/expense_model.dart';
 import '../models/trip_model.dart';
 import '../repositories/trip_repository.dart';
-import '../repositories/expense_repository.dart';
 import '../repositories/settlement_repository.dart';
 import 'activity_service.dart';
 import 'settlement_service.dart';
@@ -38,12 +37,10 @@ class TripClosingService {
   final ActivityService _activityService;
 
   TripClosingService({
-    required TripRepository tripRepository,
-    required SettlementRepository settlementRepository,
-    required ActivityService activityService,
-  })  : _tripRepository = tripRepository,
-        _settlementRepository = settlementRepository,
-        _activityService = activityService;
+    required this._tripRepository,
+    required this._settlementRepository,
+    required this._activityService,
+  });
 
   Future<ExpenseCheckResult> checkExpenses(String tripId) async {
     final expenses = await _tripRepository.getExpensesForTrip(tripId);

@@ -14,8 +14,7 @@ abstract class CategoryRepository {
 class FirebaseCategoryRepository implements CategoryRepository {
   final FirestoreService _firestoreService;
 
-  FirebaseCategoryRepository({required FirestoreService firestoreService})
-      : _firestoreService = firestoreService;
+  FirebaseCategoryRepository({required this._firestoreService});
 
   @override
   Stream<List<CategoryModel>> getTripCategories(String tripId) {

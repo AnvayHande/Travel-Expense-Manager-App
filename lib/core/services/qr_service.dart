@@ -4,8 +4,7 @@ import '../repositories/trip_repository.dart';
 class QRService {
   final TripRepository _tripRepository;
 
-  QRService({required TripRepository tripRepository})
-      : _tripRepository = tripRepository;
+  QRService({required this._tripRepository});
 
   String generateQRData(String inviteCode) {
     return inviteCode;

@@ -4,8 +4,7 @@ import '../repositories/category_repository.dart';
 class CategoryService {
   final CategoryRepository _categoryRepository;
 
-  CategoryService({required CategoryRepository categoryRepository})
-      : _categoryRepository = categoryRepository;
+  CategoryService({required this._categoryRepository});
 
   Future<void> seedDefaults(String tripId) async {
     final defaults = CategoryModel.defaultsForTrip(tripId);

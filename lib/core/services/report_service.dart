@@ -15,10 +15,9 @@ class ReportService {
   final AnalyticsService _analyticsService;
 
   ReportService({
-    required ExpenseFilterService filterService,
-    required AnalyticsService analyticsService,
-  })  : _filterService = filterService,
-        _analyticsService = analyticsService;
+    required this._filterService,
+    required this._analyticsService,
+  });
 
   Future<Uint8List> generateReport({
     required TripModel trip,
@@ -32,12 +31,10 @@ class ReportService {
   }) async {
     final pdf = pw.Document();
     final primary = PdfColor.fromInt(0xFF1565C0);
-    final accent = PdfColor.fromInt(0xFF0D47A1);
     final grey = PdfColor.fromInt(0xFF757575);
     final lightGrey = PdfColor.fromInt(0xFFF5F5F5);
     final green = PdfColor.fromInt(0xFF2E7D32);
     final red = PdfColor.fromInt(0xFFC62828);
-    final orange = PdfColor.fromInt(0xFFEF6C00);
 
     final sortedExpenses = List<ExpenseModel>.from(expenses)
       ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
@@ -316,7 +313,6 @@ class ReportService {
     }
 
     final headers = ['Expense', 'Category', 'Paid By', 'Amount', 'Split', 'Date'];
-    final colWidths = [80, 60, 55, 50, 45, 55];
 
     return pw.Table(
       border: pw.TableBorder.all(

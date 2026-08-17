@@ -60,13 +60,10 @@ class ImportNotifier extends StateNotifier<ImportProviderState> {
   final ImportService _importService;
 
   ImportNotifier({
-    required ExpenseRepository expenseRepository,
-    required CategoryRepository categoryRepository,
-    required ImportService importService,
-  })  : _expenseRepository = expenseRepository,
-        _categoryRepository = categoryRepository,
-        _importService = importService,
-        super(const ImportProviderState());
+    required this._expenseRepository,
+    required this._categoryRepository,
+    required this._importService,
+  })  : super(const ImportProviderState());
 
   void reset() {
     state = const ImportProviderState();

@@ -15,8 +15,7 @@ abstract class TemplateRepository {
 class FirebaseTemplateRepository implements TemplateRepository {
   final FirestoreService _firestoreService;
 
-  FirebaseTemplateRepository({required FirestoreService firestoreService})
-      : _firestoreService = firestoreService;
+  FirebaseTemplateRepository({required this._firestoreService});
 
   @override
   Stream<List<ExpenseTemplateModel>> getUserTemplates(String userId) {

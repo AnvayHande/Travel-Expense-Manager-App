@@ -1,6 +1,4 @@
-import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:path_provider/path_provider.dart';
 import '../../core/models/expense_model.dart';
 import '../../core/models/trip_model.dart';
 import '../../core/models/category_model.dart';
@@ -10,6 +8,7 @@ import '../../core/services/analytics_service.dart';
 import '../../core/services/expense_filter_service.dart';
 import '../../core/services/settlement_service.dart';
 import '../../core/services/budget_service.dart';
+import '../../core/utils/file_helper.dart';
 
 
 final reportServiceProvider = Provider<ReportService>((ref) {
@@ -69,9 +68,6 @@ class ReportNotifier extends StateNotifier<ReportState> {
     state = state.copyWith(isLoading: true, error: null, filePath: null, progress: 0.1);
 
     try {
-      final filterService = ExpenseFilterService();
-      final analyticsService = AnalyticsService(filterService: filterService);
-
       final budgetData = _buildBudgetData(catInfo, expenses, totalBudget);
 
       state = state.copyWith(progress: 0.3);
@@ -89,17 +85,16 @@ class ReportNotifier extends StateNotifier<ReportState> {
 
       state = state.copyWith(progress: 0.8);
 
-      final dir = await getTemporaryDirectory();
       final dateStr = '${DateTime.now().year}-'
           '${DateTime.now().month.toString().padLeft(2, '0')}-'
           '${DateTime.now().day.toString().padLeft(2, '0')}';
       final safeName = trip.tripName.replaceAll(RegExp(r'[^\w\s-]'), '').replaceAll(' ', '_');
       final fileName = '${safeName}_Report_$dateStr.pdf';
-      final file = File('${dir.path}/$fileName');
-      await file.writeAsBytes(bytes);
+      
+      final filePath = await FileHelper.saveFile(fileName, bytes, mimeType: 'application/pdf');
 
-      state = state.copyWith(isLoading: false, filePath: file.path, progress: 1.0);
-      return file.path;
+      state = state.copyWith(isLoading: false, filePath: filePath, progress: 1.0);
+      return filePath;
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
       return null;
